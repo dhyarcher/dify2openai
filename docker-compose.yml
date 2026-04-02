@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  dify2openai:
+    image: dify2openai:latest
+    container_name: dify2openai
+    ports:
+      - "${HOST_PORT:-8000}:8000"
+    environment:
+      # 修改点：用双引号包裹整行，防止解析错误
+      - "DIFY_BASE_URL=${DIFY_BASE_URL:-https://api.dify.ai}"
+      - "DIFY_INPUTS_DEFAULTS=${DIFY_INPUTS_DEFAULTS:-{\"customField\": \"\"}}"
+    restart: unless-stopped
+    volumes:
+      - ./data:/app/data 
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
